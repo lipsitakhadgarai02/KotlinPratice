@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">App1</string>
+    <string name="send_msg">Send Now</string>
+    <string name="log_in">Send Now</string>
+    <string name="get">Send Now</string>
+    <string name="set">Send Now</string>
+
+</resources>
