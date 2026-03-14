@@ -3,62 +3,62 @@ package com.example.myfirstapp
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
 
-    var currentimg = 1
-    lateinit var image: ImageView
+    private var currentimg = 1
+    private lateinit var image: ImageView
+    private lateinit var placename: TextView
+    private val places = arrayOf("Taj Mahal", "Buddha", "Red Fort", "Lotus Temple", "Train", "Lal Kila")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val next = findViewById<ImageButton>(R.id.btnNext)
         val prev = findViewById<ImageButton>(R.id.btnprev)
-
+        placename = findViewById(R.id.tvname)
 
         next.setOnClickListener {
-//      i want to go next image
-            var idCurrentImgStr = "pic$currentimg"
-//            i have to get the integer address associated with each view
-            var idCurrentImgInt =
-                this.resources.getIdentifier(idCurrentImgStr, "id", this.packageName)
+            // hide current image
+            val idCurrentImgStr = "pic$currentimg"
+            val idCurrentImgInt = resources.getIdentifier(idCurrentImgStr, "id", packageName)
             image = findViewById(idCurrentImgInt)
             image.alpha = 0f
 
+            // move to next
             currentimg++
-            if (currentimg > 6) {
-                currentimg = 1
-            }
-            var idImgToShowStr = "pic$currentimg"
-            var idImgToShowInt =
-                this.resources.getIdentifier(idImgToShowStr, "id", this.packageName)
+            if (currentimg > 6) currentimg = 1
+
+            // show next image
+            val idImgToShowStr = "pic$currentimg"
+            val idImgToShowInt = resources.getIdentifier(idImgToShowStr, "id", packageName)
             image = findViewById(idImgToShowInt)
             image.alpha = 1f
 
+            placename.text = places[currentimg - 1]
         }
+
         prev.setOnClickListener {
-//      i want to go previous image
-            var idCurrentImgStr = "pic$currentimg"
-//            i have to get the integer address associated with each view
-            var idCurrentImgInt =
-                this.resources.getIdentifier(idCurrentImgStr, "id", this.packageName)
+            // hide current image
+            val idCurrentImgStr = "pic$currentimg"
+            val idCurrentImgInt = resources.getIdentifier(idCurrentImgStr, "id", packageName)
             image = findViewById(idCurrentImgInt)
             image.alpha = 0f
 
+            // move to previous
             currentimg--
-            if (currentimg < 1) {
-                currentimg = 6
-            }
-            var idImgToShowStr = "pic$currentimg"
-            var idImgToShowInt =
-                this.resources.getIdentifier(idImgToShowStr, "id", this.packageName)
+            if (currentimg < 1) currentimg = 6
+
+            // show previous image
+            val idImgToShowStr = "pic$currentimg"
+            val idImgToShowInt = resources.getIdentifier(idImgToShowStr, "id", packageName)
             image = findViewById(idImgToShowInt)
             image.alpha = 1f
 
+            placename.text = places[currentimg - 1]
         }
     }
 }

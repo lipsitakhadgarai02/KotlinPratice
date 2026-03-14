@@ -120,9 +120,8 @@
 
     </LinearLayout>
 
-    <!-- Location Name -->
     <TextView
-        android:id="@+id/tv1"
+        android:id="@+id/tvname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
@@ -131,7 +130,5 @@
         android:text="Taj Mahal"
         android:textColor="@color/white"
         android:textSize="25sp"
-        android:textStyle="bold"
-        />
-
+        android:textStyle="bold" />
 </LinearLayout>
