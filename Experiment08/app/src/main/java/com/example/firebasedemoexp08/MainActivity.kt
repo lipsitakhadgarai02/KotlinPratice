@@ -1,4 +1,5 @@
 package com.example.firebasedemoexp08
+
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -29,14 +30,19 @@ class MainActivity : AppCompatActivity() {
             val name = etName.text.toString().trim()
 
             if (name.isNotEmpty()) {
-
                 val id = database.push().key!!
                 val student = Student(id, name)
 
                 database.child(id).setValue(student)
-
-                Toast.makeText(this, "Student Created", Toast.LENGTH_SHORT).show()
-                etName.text.clear()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Student Created", Toast.LENGTH_SHORT).show()
+                        etName.text.clear()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Failed to create: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -44,25 +50,30 @@ class MainActivity : AppCompatActivity() {
         // READ
         // =====================
         btnRead.setOnClickListener {
-
+            firstStudentId = null // Reset
             database.get().addOnSuccessListener { snapshot ->
-
                 if (snapshot.exists()) {
-
                     val result = StringBuilder()
-
                     for (child in snapshot.children) {
-                        val student = child.getValue(Student::class.java)
-                        result.append("ID: ${student?.id}  Name: ${student?.name}\n")
-
-                        // Store first record ID for update/delete
-                        if (firstStudentId == null) {
-                            firstStudentId = student?.id
+                        try {
+                            val student = child.getValue(Student::class.java)
+                            if (student != null) {
+                                result.append("ID: ${student.id}  Name: ${student.name}\n")
+                                if (firstStudentId == null) {
+                                    firstStudentId = student.id
+                                }
+                            }
+                        } catch (e: Exception) {
+                            // If a record is a String instead of an object, it lands here
+                            result.append("Invalid Record at ${child.key}: ${child.value}\n")
                         }
                     }
-
                     tvResult.text = result.toString()
+                } else {
+                    tvResult.text = "No records found in database."
                 }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Read failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -70,16 +81,15 @@ class MainActivity : AppCompatActivity() {
         // UPDATE (First Record)
         // =====================
         btnUpdate.setOnClickListener {
-
             if (firstStudentId != null) {
-
                 database.child(firstStudentId!!)
                     .child("name")
                     .setValue("Updated Name")
-
-                Toast.makeText(this, "Updated First Record", Toast.LENGTH_SHORT).show()
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Updated First Record", Toast.LENGTH_SHORT).show()
+                    }
             } else {
-                Toast.makeText(this, "Read Data First", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Read Data First to get a record", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -87,17 +97,15 @@ class MainActivity : AppCompatActivity() {
         // DELETE (First Record)
         // =====================
         btnDelete.setOnClickListener {
-
             if (firstStudentId != null) {
-
                 database.child(firstStudentId!!)
                     .removeValue()
-
-                Toast.makeText(this, "Deleted First Record", Toast.LENGTH_SHORT).show()
-
-                firstStudentId = null
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Deleted First Record", Toast.LENGTH_SHORT).show()
+                        firstStudentId = null
+                    }
             } else {
-                Toast.makeText(this, "Read Data First", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Read Data First to get a record", Toast.LENGTH_SHORT).show()
             }
         }
     }
